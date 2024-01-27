@@ -12,19 +12,19 @@ Immerse yourself further in the world of Slime Rancher 2 with the More Languages
 ## Installation
 
 1. **Download the Mod:**
-    - [More Languages Mod](https://www.nexusmods.com/slimerancher2/mods/266)
+    - [More Languages Mod](https://www.nexusmods.com/slimerancher2/mods/4)
 
 2. **Install MelonLoader:**
     - Get started by installing [MelonLoader](https://github.com/LavaGang/MelonLoader).
 
 3. **Install the Mod:**
-    - Extract the provided DLL into your Mods directory.
+    - Extract the provided files into your game directory.
 
 4. **Contribute and Expand:**
     - Join our vibrant community to contribute to existing translations or propose new languages.
 
 Embark on a global adventure together—let's make Slime Rancher 2 accessible to players worldwide!
 
-[Download Mod](https://www.nexusmods.com/slimerancher2/mods/266)
+[Download Mod](https://www.nexusmods.com/slimerancher2/mods/4)
 
-For Slime Rancher 1 enthusiasts, an alternative version is available: [Download Mod](https://www.nexusmods.com/slimerancher/mods/31), [Source Code] (Not yet).
+For Slime Rancher 1 enthusiasts, an alternative version is available: [Download Mod](https://www.nexusmods.com/slimerancher/mods/31), [Source Code](https://github.com/KomiksPL/MoreLanguagesSR1).
