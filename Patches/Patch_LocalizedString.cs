@@ -38,7 +38,6 @@ public static class Patch_LocalizedString
       if (LanguageController.addedLocales.FirstOrDefault( x => x.Identifier.Code == locale.Identifier.Code) == null)
         return true;
       StringTable stringTable = LanguageController.cachedStringTables.Find(x => x.TableCollectionName == __instance.TableReference.TableCollectionName);
-      MelonLogger.Msg(stringTable != null);
       StringTableEntry stringTableEntry = stringTable.GetEntry(__instance.TableEntryReference.KeyId) ?? stringTable.GetEntry(__instance.TableEntryReference.Key);
       LocalizedStringDatabase stringDatabase = LocalizationSettings.StringDatabase;
       TableReference tableReference = __instance.TableReference;

@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: MoreLanguagesMod.StringTableAddEntryPatch
-// Assembly: MoreLanguagesMod, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: 67967EAE-1BC3-437A-84DC-B4390CE82D77
-// Assembly location: D:\SlimeRancherModding\SR2\TestingMod\MoreLanguagesMod.dll
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;

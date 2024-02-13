@@ -31,7 +31,7 @@ namespace MoreLanguagesMod
     internal static void ConvertDirectoryIntoFiles()
     {
       foreach (System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.Dictionary<string, string>> translation in translations)
-        File.WriteAllText("D:\\SteamLibrary\\steamapps\\common\\Slime Rancher 2\\MoreLanguagesMod\\enNew\\" + translation.Key + ".json", JsonConvert.SerializeObject(translations[translation.Key], (Formatting) 1));
+        File.WriteAllText("D:\\SteamLibrary\\steamapps\\common\\Slime Rancher 2\\MoreLanguages\\enNew\\" + translation.Key + ".json", JsonConvert.SerializeObject(translations[translation.Key], (Formatting) 1));
     }
   }
 }

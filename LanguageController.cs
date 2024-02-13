@@ -57,7 +57,6 @@ namespace MoreLanguagesMod
       if (!textMeshPro.font.m_FallbackFontAssetTable.Contains(RusselType))
       {
         textMeshPro.font.m_FallbackFontAssetTable.Add(RusselType);
-        RusselType = null;
       }
     }
 
@@ -66,7 +65,6 @@ namespace MoreLanguagesMod
       if (!textMeshPro.font.m_FallbackFontAssetTable.Contains(HumanSans))
       {
         textMeshPro.font.m_FallbackFontAssetTable.Add(HumanSans);
-        HumanSans = null;
       }
       
     }
@@ -108,7 +106,8 @@ namespace MoreLanguagesMod
       Locale locale)
     {
       string code = locale.Identifier.Code;
-      if (!Directory.Exists(Path.Combine(MelonEnvironment.MelonBaseDirectory, "MoreLanguagesMod", code)))
+      var combine = Path.Combine(MelonEnvironment.MelonBaseDirectory, "MoreLanguages", code);
+      if (!Directory.Exists(combine))
       {
         MelonLogger.Msg("The language '" + locale.name + "' doesn't have a related folder for the language. LangCode: " + code);
         return default;

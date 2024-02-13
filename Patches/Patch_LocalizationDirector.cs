@@ -24,6 +24,7 @@ public static class Patch_LocalizationDirector
             x.SortOrder = 0;
             __instance.Locales.Add(x);
         });
+        MelonCoroutines.Start(EntryPoint.GetAllTables(__instance.Locales.ToArray().FirstOrDefault( x => x.Identifier.Code.Equals("en"))));
     }
     [HarmonyPatch(nameof(LoadTables)), HarmonyPrefix, HarmonyPriority(800)]
     public static bool LoadTables(LocalizationDirector __instance)
@@ -57,19 +58,18 @@ public static class Patch_LocalizationDirector
         else
         {
           StringTable original = EntryPoint.copyTables.FirstOrDefault(x => x.name.Contains(stringKeys.Key));
-          StringTable stringTable1 = UnityEngine.Object.Instantiate(original);
+          StringTable cloned = UnityEngine.Object.Instantiate(original);
           if (original != null)
-            stringTable1.name = original.name.Replace("_en(Clone)", "_" + identifierCode);
-          stringTable1.LocaleIdentifier = LocalizationSettings.SelectedLocale.Identifier;
-          StringTable stringTable2 = stringTable1;
-          stringTable2.hideFlags |= HideFlags.HideAndDontSave;
+            cloned.name = original.name.Replace("_en(Clone)", "_" + identifierCode);
+          cloned.LocaleIdentifier = LocalizationSettings.SelectedLocale.Identifier;
+          cloned.hideFlags |= HideFlags.HideAndDontSave;
           System.Collections.Generic.Dictionary<string, string> dictionary = JsonConvert.DeserializeObject<System.Collections.Generic.Dictionary<string, string>>(File.ReadAllText(fileInfo.FullName));
-          foreach (Il2CppSystem.Collections.Generic.KeyValuePair<long, StringTableEntry> mTableEntry in stringTable1.m_TableEntries)
+          foreach (Il2CppSystem.Collections.Generic.KeyValuePair<long, StringTableEntry> mTableEntry in cloned.m_TableEntries)
           {
             if (!string.IsNullOrEmpty(mTableEntry.Value.Key) && dictionary.TryGetValue(mTableEntry.Value.Key, out var str))
               mTableEntry.Value.Value = str;
           }
-          LanguageController.cachedStringTables.Add(stringTable1);
+          LanguageController.cachedStringTables.Add(cloned);
         }
       }
       foreach (StringTable cachedStringTable in LanguageController.cachedStringTables)

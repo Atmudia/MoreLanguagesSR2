@@ -9,7 +9,7 @@ using UnityEngine.Localization.Tables;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Locale = UnityEngine.Localization.Locale;
 
-[assembly: MelonInfo(typeof(EntryPoint), "MoreLanguagesMod", "1.0.4", "KomiksPL", "https://www.nexusmods.com/slimerancher2/mods/31")]
+[assembly: MelonInfo(typeof(EntryPoint), "MoreLanguagesMod", "1.0.5", "KomiksPL", "https://www.nexusmods.com/slimerancher2/mods/31")]
 namespace MoreLanguagesMod
 {
   
@@ -41,7 +41,6 @@ namespace MoreLanguagesMod
       switch (sceneName)
       {
         case "SystemCore":
-          MelonCoroutines.Start(GetAllTables(SRSingleton<SystemContext>.Instance.LocalizationDirector.Locales.ToArray().FirstOrDefault( x => x.Identifier.Code.Equals("en"))));
           break;
       }
     }

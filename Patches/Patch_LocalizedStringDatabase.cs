@@ -23,6 +23,8 @@ public static class Patch_LocalizedStringDatabase
         if (entry.m_FormatCache != null)
             return;
         entry.m_FormatCache = entry.GetOrCreateFormatCache() ?? new FormatCache();
+        if (Patch_LocalizedString.Instance == null)
+            return;
         entry.m_FormatCache.LocalVariables = Patch_LocalizedString.Instance.TryCast<IVariableGroup>();
         entry.m_FormatCache.VariableTriggers.Clear();
         Patch_LocalizedString.Instance = null;
