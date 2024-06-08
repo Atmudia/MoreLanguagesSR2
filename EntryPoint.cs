@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Linq;
 using Il2Cpp;
+using Il2CppMonomiPark.SlimeRancher.SceneManagement;
+using Il2CppMonomiPark.SlimeRancher.Shop;
 using MelonLoader;
 using MoreLanguagesMod;
 using UnityEngine;
@@ -9,7 +11,7 @@ using UnityEngine.Localization.Tables;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Locale = UnityEngine.Localization.Locale;
 
-[assembly: MelonInfo(typeof(EntryPoint), "MoreLanguagesMod", "1.0.5", "KomiksPL", "https://www.nexusmods.com/slimerancher2/mods/31")]
+[assembly: MelonInfo(typeof(EntryPoint), "MoreLanguagesMod", "1.0.6", "KomiksPL", "https://www.nexusmods.com/slimerancher2/mods/31")]
 namespace MoreLanguagesMod
 {
   
@@ -44,12 +46,23 @@ namespace MoreLanguagesMod
           break;
       }
     }
+    
 
     public override void OnInitializeMelon()
     {
       LanguageController.Setup();
       LanguageController.InstallLocale(Locale.CreateLocale(SystemLanguage.Polish));
+      // ShopItemAssetReference
       // LanguageController.InstallLocale(Locale.CreateLocale(SystemLanguage.Turkish));
+    }
+
+    public static void Spawn(GameObject obj)
+    {
+      InstantiationHelpers.InstantiateActor(obj,
+        SystemContext.Instance.SceneLoader.CurrentSceneGroup, SceneContext.Instance.Player.transform.position,
+        Quaternion.identity);
+
+      
     }
   }
 }

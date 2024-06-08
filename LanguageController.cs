@@ -1,16 +1,11 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: MoreLanguagesMod.LanguageController
-// Assembly: MoreLanguagesMod, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: 67967EAE-1BC3-437A-84DC-B4390CE82D77
-// Assembly location: D:\SlimeRancherModding\SR2\TestingMod\MoreLanguagesMod.dll
-
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
+﻿using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppTMPro;
 using MelonLoader;
 using MelonLoader.Utils;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Il2CppInterop.Runtime;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Tables;
@@ -20,13 +15,12 @@ namespace MoreLanguagesMod
 {
   public static class LanguageController
   {
-    private static TMP_FontAsset RusselType;
-    private static TMP_FontAsset Nunito;
-    private static TMP_FontAsset HumanSans;
-    private static TMP_FontAsset NunitoLight;
     internal static List<Locale> addedLocales = new List<Locale>();
     public static Dictionary<string, Dictionary<long, string>> moddedTranslations = new Dictionary<string, Dictionary<long, string>>();
     internal static List<StringTable> cachedStringTables = new List<StringTable>();
+
+
+    public static Dictionary<string, TMP_FontAsset> FontAssets = new Dictionary<string, TMP_FontAsset>();
 
     internal static void Setup()
     {
@@ -36,37 +30,53 @@ namespace MoreLanguagesMod
         byte[] buffer = new byte[manifestResourceStream.Length];
         _ = manifestResourceStream.Read((System.Span<byte>) buffer);
         AssetBundle assetBundle = AssetBundle.LoadFromMemory(buffer);
-        RusselType = TMP_FontAsset.CreateFontAsset(assetBundle.LoadAsset("KatahdinRound").Cast<Font>());
-        RusselType.hideFlags |= HideFlags.HideAndDontSave;
-        RusselType.name = "KatahdinRound";
-        Nunito = TMP_FontAsset.CreateFontAsset(assetBundle.LoadAsset("Nunito-Bold").Cast<Font>());
-        Nunito.hideFlags |= HideFlags.HideAndDontSave;
-        Nunito.name = "Nunito-Bold";
-        HumanSans = TMP_FontAsset.CreateFontAsset(assetBundle.LoadAsset("HumanSans-Regular").Cast<Font>());
-        HumanSans.hideFlags |= HideFlags.HideAndDontSave;
-        HumanSans.name = "HumanSans-Regular";
-        NunitoLight = TMP_FontAsset.CreateFontAsset(assetBundle.LoadAsset("NunitoSans-Light").Cast<Font>());
-        NunitoLight.hideFlags |= HideFlags.HideAndDontSave;
-        NunitoLight.name = "NunitoSans-Light";
+
+        var enumerable = assetBundle.LoadAllAssets(Il2CppType.Of<Font>()).Select(x => x.Cast<Font>());
+        foreach (var font in enumerable)
+        {
+          var tmpFontAsset = TMP_FontAsset.CreateFontAsset(font);
+          tmpFontAsset.hideFlags |= HideFlags.HideAndDontSave;
+          tmpFontAsset.name = font.name;
+          FontAssets.Add(tmpFontAsset.name, tmpFontAsset);
+        }
+        
+        // RusselType = TMP_FontAsset.CreateFontAsset(assetBundle.LoadAsset("KatahdinRound").Cast<Font>());
+        // RusselType.hideFlags |= HideFlags.HideAndDontSave;
+        // RusselType.name = "KatahdinRound";
+        // Nunito = TMP_FontAsset.CreateFontAsset(assetBundle.LoadAsset("Nunito-Bold").Cast<Font>());
+        // Nunito.hideFlags |= HideFlags.HideAndDontSave;
+        // Nunito.name = "Nunito-Bold";
+        // HumanSans = TMP_FontAsset.CreateFontAsset(assetBundle.LoadAsset("HumanSans-Regular").Cast<Font>());
+        // HumanSans.hideFlags |= HideFlags.HideAndDontSave;
+        // HumanSans.name = "HumanSans-Regular";
+        // NunitoLight = TMP_FontAsset.CreateFontAsset(assetBundle.LoadAsset("NunitoSans-Light").Cast<Font>());
+        // NunitoLight.hideFlags |= HideFlags.HideAndDontSave;
+        // NunitoLight.name = "NunitoSans-Light";
       }
     
     }
 
     internal static void InstallHemispheres(TextMeshProUGUI textMeshPro)
     {
-      if (!textMeshPro.font.m_FallbackFontAssetTable.Contains(RusselType))
+      var tmpFontAsset = FontAssets["KatahdinRound"];
+      if (!textMeshPro.font.m_FallbackFontAssetTable.Contains(tmpFontAsset))
       {
-        textMeshPro.font.m_FallbackFontAssetTable.Add(RusselType);
+        textMeshPro.font.m_FallbackFontAssetTable.Add(tmpFontAsset);
       }
     }
+    
 
-    internal static void InstallHumanstSDF(TextMeshProUGUI textMeshPro)
+    internal static void InstallLexend(TextMeshProUGUI textMeshPro)
     {
-      if (!textMeshPro.font.m_FallbackFontAssetTable.Contains(HumanSans))
+      MelonLogger.Msg(textMeshPro.font.name);
+      if (LanguageController.FontAssets.TryGetValue(textMeshPro.font.name.Replace(" (Latin)", string.Empty), out var result))
       {
-        textMeshPro.font.m_FallbackFontAssetTable.Add(HumanSans);
+        if (!textMeshPro.font.m_FallbackFontAssetTable.Contains(result))
+        {
+          textMeshPro.font.m_FallbackFontAssetTable.Add(result);
+        }
       }
-      
+     
     }
 
     public static void InstallLocale(Locale locale)

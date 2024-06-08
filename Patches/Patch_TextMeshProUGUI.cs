@@ -14,7 +14,7 @@ public class Patch_TextMeshProUGUI
             return;
         if (__instance.font.name.Contains("Runsell Type - HemispheresCaps"))
             LanguageController.InstallHemispheres(__instance);
-        if (__instance.font.name.Contains("Lexend-Regular") || __instance.font.name.Contains("Lexend-Medium"))
-            LanguageController.InstallHumanstSDF(__instance);
+        if (__instance.font.name.Contains("Lexend"))
+            LanguageController.InstallLexend(__instance);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
+using MelonLoader.Utils;
 using UnityEngine;
 using UnityEngine.Localization.Tables;
 
@@ -7,7 +8,7 @@ namespace MoreLanguagesMod
 {
   internal static class RegenerateTranslationsUtils
   {
-    internal static bool ifRegenerate = false;
+    internal static bool ifRegenerate = true;
     private static System.Collections.Generic.List<string> catchedLists = new System.Collections.Generic.List<string>();
     private static System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string>> translations = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string>>();
 
@@ -30,8 +31,12 @@ namespace MoreLanguagesMod
 
     internal static void ConvertDirectoryIntoFiles()
     {
-      foreach (System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.Dictionary<string, string>> translation in translations)
-        File.WriteAllText("D:\\SteamLibrary\\steamapps\\common\\Slime Rancher 2\\MoreLanguages\\enNew\\" + translation.Key + ".json", JsonConvert.SerializeObject(translations[translation.Key], (Formatting) 1));
+      foreach (System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.Dictionary<string, string>>
+                 translation in translations)
+      {
+        var directoryInfo = new DirectoryInfo(Path.Combine(MelonEnvironment.MelonBaseDirectory, "MoreLanguages", "enNew", translation.Key + ".json"));
+        File.WriteAllText(directoryInfo.FullName, JsonConvert.SerializeObject(translations[translation.Key], (Formatting) 1));
+      }
     }
   }
 }
