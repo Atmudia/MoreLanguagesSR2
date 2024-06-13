@@ -21,7 +21,7 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 using Locale = UnityEngine.Localization.Locale;
 using Object = UnityEngine.Object;
 
-[assembly: MelonInfo(typeof(EntryPoint), "MoreLanguagesMod", "1.0.7", "KomiksPL", "https://www.nexusmods.com/slimerancher2/mods/31")]
+[assembly: MelonInfo(typeof(EntryPoint), "MoreLanguagesMod", "1.0.8", "KomiksPL", "https://www.nexusmods.com/slimerancher2/mods/31")]
 namespace MoreLanguagesMod
 {
   [HarmonyPatch]
@@ -31,7 +31,7 @@ namespace MoreLanguagesMod
     [DllImport("User32.dll", CharSet = CharSet.Unicode)]
     public static extern int MessageBox(IntPtr h, string m, string c, int type);
     public static System.Collections.Generic.List<StringTable> copyTables = new System.Collections.Generic.List<StringTable>();
-    public static bool Activated = false;
+    public static bool Activated = true;
 
     public static IEnumerator GetAllTables(Locale locale)
     {
@@ -95,7 +95,7 @@ namespace MoreLanguagesMod
         return true;
       foreach (var locale in LanguageController.AddedLocales)
       {
-        MelonLogger.Msg(key.ToString());
+        // MelonLogger.Msg(key.ToString());
         if (key.ToString()!.Contains($"_{locale.Identifier.Code}") && LanguageController.ResourceLocationBases.TryGetValue("MODDEDLanguage/" + key.ToString(), out var value))
         {
           __result = Addressables.ResourceManager.CreateCompletedOperation(value, string.Empty);
