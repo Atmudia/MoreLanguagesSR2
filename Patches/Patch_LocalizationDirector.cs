@@ -18,64 +18,14 @@ public static class Patch_LocalizationDirector
     [HarmonyPatch(nameof(Awake)), HarmonyPostfix]
     public static void Awake(LocalizationDirector __instance)
     {
-        LanguageController.addedLocales.ForEach(delegate(Locale x)
+        if (!EntryPoint.Activated)
+            return;
+        LanguageController.AddedLocales.ForEach(delegate(Locale x)
         {
             x.CustomFormatterCode = "";
             x.SortOrder = 0;
             __instance.Locales.Add(x);
         });
         MelonCoroutines.Start(EntryPoint.GetAllTables(__instance.Locales.ToArray().FirstOrDefault( x => x.Identifier.Code.Equals("en"))));
-    }
-    [HarmonyPatch(nameof(LoadTables)), HarmonyPrefix, HarmonyPriority(800)]
-    public static bool LoadTables(LocalizationDirector __instance)
-    {      
-     string identifierCode = LocalizationSettings.SelectedLocale.Identifier.Code;
-      if (LanguageController.addedLocales.FirstOrDefault( x => x.Identifier.Code == identifierCode) == null)
-        return true;
-      foreach (StringTable cachedStringTable in LanguageController.cachedStringTables)
-        UnityEngine.Object.Destroy(cachedStringTable);
-      LanguageController.cachedStringTables.Clear();
-      DirectoryInfo directoryInfo = new DirectoryInfo(Path.Combine(MelonEnvironment.MelonBaseDirectory, "MoreLanguages", identifierCode));
-      if (!directoryInfo.Exists)
-      {
-        MelonLogger.Msg("This Language named " + LocalizationSettings.SelectedLocale.name + " doesn't have any folder related to language. LangCode: " + identifierCode);
-        return false;
-      }
-      Il2CppSystem.Collections.Generic.Dictionary<string, StringTable> tables = __instance.Tables;
-      if (!tables.ContainsKey("BootUp"))
-        tables.Add("BootUp", null);
-      if (!tables.ContainsKey("Options"))
-        tables.Add("Options", null);
-      foreach (Il2CppSystem.Collections.Generic.KeyValuePair<string, StringTable> keyValuePair in tables)
-      {
-        Il2CppSystem.Collections.Generic.KeyValuePair<string, StringTable> stringKeys = keyValuePair;
-        FileInfo fileInfo = new FileInfo(Path.Combine(directoryInfo.FullName, stringKeys.Key + ".json"));
-        if (!fileInfo.Exists)
-        {
-          string message = "This Language named " + LocalizationSettings.SelectedLocale.name + " doesn't have bundle named " + stringKeys.Key + ". LangCode: " + identifierCode;
-          MelonLogger.Msg(message);
-        }
-        else
-        {
-          StringTable original = EntryPoint.copyTables.FirstOrDefault(x => x.name.Contains(stringKeys.Key));
-          StringTable cloned = UnityEngine.Object.Instantiate(original);
-          if (original != null)
-            cloned.name = original.name.Replace("_en(Clone)", "_" + identifierCode);
-          cloned.LocaleIdentifier = LocalizationSettings.SelectedLocale.Identifier;
-          cloned.hideFlags |= HideFlags.HideAndDontSave;
-          System.Collections.Generic.Dictionary<string, string> dictionary = JsonConvert.DeserializeObject<System.Collections.Generic.Dictionary<string, string>>(File.ReadAllText(fileInfo.FullName));
-          foreach (Il2CppSystem.Collections.Generic.KeyValuePair<long, StringTableEntry> mTableEntry in cloned.m_TableEntries)
-          {
-            if (!string.IsNullOrEmpty(mTableEntry.Value.Key) && dictionary.TryGetValue(mTableEntry.Value.Key, out var str))
-              mTableEntry.Value.Value = str;
-          }
-          LanguageController.cachedStringTables.Add(cloned);
-        }
-      }
-      foreach (StringTable cachedStringTable in LanguageController.cachedStringTables)
-        __instance.Tables[cachedStringTable.SharedData.TableCollectionName] = cachedStringTable;
-      __instance.Tables.Remove("BootUp");
-      __instance.Tables.Remove("Options");
-      return false;
     }
 }

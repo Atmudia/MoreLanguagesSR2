@@ -8,7 +8,7 @@ namespace MoreLanguagesMod
 {
   internal static class RegenerateTranslationsUtils
   {
-    internal static bool ifRegenerate = true;
+    internal static bool ifRegenerate = false;
     private static System.Collections.Generic.List<string> catchedLists = new System.Collections.Generic.List<string>();
     private static System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string>> translations = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string>>();
 

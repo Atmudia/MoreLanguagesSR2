@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreLanguages", "MoreLanguages.csproj", "{F79D1330-F39B-415B-9C99-989A91088263}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreLanguagesMod", "MoreLanguagesMod.csproj", "{F79D1330-F39B-415B-9C99-989A91088263}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
