@@ -1,5 +1,4 @@
-﻿using System;
-using HarmonyLib;
+﻿using HarmonyLib;
 using MelonLoader;
 
 namespace MoreLanguagesMod.Patches

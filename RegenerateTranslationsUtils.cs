@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json;
-using System.IO;
+﻿using System.Text.Json;
+using MelonLoader.TinyJSON;
 using MelonLoader.Utils;
-using UnityEngine;
 using UnityEngine.Localization.Tables;
 
 namespace MoreLanguagesMod
@@ -35,7 +34,12 @@ namespace MoreLanguagesMod
                  translation in translations)
       {
         var directoryInfo = new DirectoryInfo(Path.Combine(MelonEnvironment.MelonBaseDirectory, "MoreLanguages", "enNew", translation.Key + ".json"));
-        File.WriteAllText(directoryInfo.FullName, JsonConvert.SerializeObject(translations[translation.Key], (Formatting) 1));
+        
+        // File.WriteAllText(directoryInfo.FullName, JsonConvert.SerializeObject(translations[translation.Key], (Formatting) 1));
+        File.WriteAllText(directoryInfo.FullName, JsonSerializer.Serialize(translations[translation.Key], new JsonSerializerOptions()
+        {
+          WriteIndented = true
+        }));
       }
     }
   }

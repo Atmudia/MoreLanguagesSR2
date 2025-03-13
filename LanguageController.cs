@@ -1,12 +1,10 @@
-﻿using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using Il2CppTMPro;
+﻿using Il2CppTMPro;
 using MelonLoader;
-using MelonLoader.Utils;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Il2CppInterop.Runtime;
-using Newtonsoft.Json;
+// using MelonLoader.TinyJSON;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Tables;
@@ -18,7 +16,7 @@ namespace MoreLanguagesMod
 {
   public static class LanguageController
   {
-    internal static List<Locale> AddedLocales = new List<Locale>();
+    internal static Dictionary<Locale, Assembly> AddedLocales = new Dictionary<Locale, Assembly>();
     internal static Dictionary<string, Dictionary<long, string>> ModdedTranslations = new Dictionary<string, Dictionary<long, string>>();
     internal static readonly Dictionary<string, StringTable> CachedStringTables = new Dictionary<string, StringTable>();
     
@@ -57,22 +55,21 @@ namespace MoreLanguagesMod
 
     internal static void InstallLexend(TextMeshProUGUI textMeshPro)
     {
-      if (LanguageController.FontAssets.TryGetValue(textMeshPro.font.name.Replace(" (Latin)", string.Empty), out var result))
+      if (!LanguageController.FontAssets.TryGetValue(textMeshPro.font.name.Replace(" (Latin)", string.Empty),
+            out var result))
+        result = FontAssets.FirstOrDefault(x => x.Key.Contains("Lexend")).Value;
+      if (!textMeshPro.font.m_FallbackFontAssetTable.Contains(result))
       {
-        if (!textMeshPro.font.m_FallbackFontAssetTable.Contains(result))
-        {
-          textMeshPro.font.m_FallbackFontAssetTable.Add(result);
-        }
+        textMeshPro.font.m_FallbackFontAssetTable.Add(result);
       }
-     
+
     }
 
-    public static void InstallLocale(Locale locale)
+    public static void InstallLocale(Locale locale, Assembly assembly)
     {
       locale.name = locale.Identifier.ToString();
-      Locale locale1 = locale;
-      locale1.hideFlags |= HideFlags.HideAndDontSave;
-      AddedLocales.Add(locale);
+      locale.hideFlags |= HideFlags.HideAndDontSave;
+      AddedLocales.Add(locale, assembly);
     }
 
     internal static StringTableEntry GetEntryOrAddEntry(
@@ -110,47 +107,33 @@ namespace MoreLanguagesMod
         ResourceLocationBases.Add(key, list.Cast<Il2CppSystem.Collections.Generic.IList<IResourceLocation>>());
       }
     }
-    public static StringTable CreateClonedTable(StringTable original, Locale localeAdded)
+    public static StringTable CreateClonedTable(StringTable original, Locale localeAdded, Assembly assembly)
     {
       var cloned = Object.Instantiate(original);
-      cloned.name = original.name.Replace("_en(Clone)", $"_{localeAdded.Identifier.Code}");
+      cloned.name = original.name.Replace("_en(Clone)", $"_{localeAdded.Identifier.Code}", StringComparison.InvariantCultureIgnoreCase);
       cloned.LocaleIdentifier = localeAdded.Identifier;
       cloned.hideFlags |= HideFlags.HideAndDontSave;
       
-      var path = Path.Combine(MelonEnvironment.MelonBaseDirectory, "MoreLanguages", localeAdded.Identifier.Code, $"{original.SharedData.TableCollectionName}.json");
-      if (File.Exists(path))
+      
+      string assemblyName = assembly.GetName().Name;
+      string resourceName = $"{assemblyName}.LangFiles.{localeAdded.Identifier.Code}.{original.SharedData.TableCollectionName}.json";
+      using Stream resourceStream = assembly.GetManifestResourceStream(resourceName);
+      if (resourceStream == null) return cloned;
+      using StreamReader reader = new StreamReader(resourceStream);
+      string jsonContent = reader.ReadToEnd();
+      // var translations = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonContent);
+      // var translations = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonContent);
+      JsonObject translations = (JsonObject)JsonNode.Parse(jsonContent);
+
+      foreach (var entry in cloned.m_TableEntries)
       {
-        var translations = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(path));
-        foreach (var entry in cloned.m_TableEntries)
+        if (!string.IsNullOrEmpty(entry.Value.Key) && translations.TryGetPropertyValue(entry.Value.Key, out var value))
         {
-          if (!string.IsNullOrEmpty(entry.Value.Key) && translations.TryGetValue(entry.Value.Key, out var value))
-          {
-            entry.Value.Value = value;
-          }
+          entry.Value.Value = value.ToString();
         }
       }
 
       return cloned;
     }
-
-
-    // internal static (StringTable, StringTableEntry) ResetTranslations(
-      //   TableReference tableReference,
-      //   TableEntryReference tableEntryReference,
-      //   Locale locale)
-      // {
-      //   string code = locale.Identifier.Code;
-      //   var combine = Path.Combine(MelonEnvironment.MelonBaseDirectory, "MoreLanguages", code);
-      //   if (!Directory.Exists(combine))
-      //   {
-      //     MelonLogger.Msg("The language '" + locale.name + "' doesn't have a related folder for the language. LangCode: " + code);
-      //     return default;
-      //   }
-      //   StringTable stringTable = cachedStringTables.FirstOrDefault((x => x.name.Contains(tableReference.TableCollectionName) && Object.Equals(x.LocaleIdentifier, locale.Identifier)));
-      //   if (stringTable == null)
-      //     return default;
-      //   StringTableEntry entryOrAddEntry = stringTable.GetEntryOrAddEntry(tableEntryReference.KeyId, tableEntryReference.Key);
-      //   return (stringTable, entryOrAddEntry);
-      // }
   }
 }

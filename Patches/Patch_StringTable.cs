@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using HarmonyLib;
 using UnityEngine.Localization.Tables;
 
 namespace MoreLanguagesMod.Patches
 {
     [HarmonyPatch]
+    // [HarmonyPatch(typeof(DetailedLocalizationTable<StringTableEntry>), "AddEntry", typeof(string), typeof(string))]
     public static class Patch_StringTable
     {
         public static MethodBase TargetMethod() => typeof (DetailedLocalizationTable<>).MakeGenericType(typeof (StringTableEntry)).GetMethod("AddEntry", new Type[2]
@@ -24,8 +23,8 @@ namespace MoreLanguagesMod.Patches
                 return;
             if (!LanguageController.ModdedTranslations.TryGetValue(instance.TableCollectionName, out var dictionary))
             {
-                dictionary = new Dictionary<long, string>();
-                LanguageController.ModdedTranslations.TryAdd(instance.TableCollectionName, dictionary);
+               
+                LanguageController.ModdedTranslations.TryAdd(instance.TableCollectionName, dictionary = new Dictionary<long, string>());
             }
             dictionary.TryAdd(keyId, localized);
         }

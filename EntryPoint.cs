@@ -1,18 +1,10 @@
 ﻿using System.Collections;
-using System.Linq;
-using System.Runtime.InteropServices;
 using HarmonyLib;
-using Il2Cpp;
-using Il2CppMonomiPark.SlimeRancher.SceneManagement;
-using Il2CppMonomiPark.SlimeRancher.Shop;
-using Il2CppMonomiPark.SlimeRancher.UI.Popup;
+using Il2CppInterop.Runtime;
 using MelonLoader;
-using MelonLoader.Utils;
 using MoreLanguagesMod;
-using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using UnityEngine.ResourceManagement;
@@ -21,17 +13,13 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 using Locale = UnityEngine.Localization.Locale;
 using Object = UnityEngine.Object;
 
-[assembly: MelonInfo(typeof(EntryPoint), "MoreLanguagesMod", "1.0.8", "KomiksPL", "https://www.nexusmods.com/slimerancher2/mods/31")]
+[assembly: MelonInfo(typeof(EntryPoint), "MoreLanguagesMod", "1.2", "Atmudia", "https://www.nexusmods.com/slimerancher2/mods/31")]
 namespace MoreLanguagesMod
 {
   [HarmonyPatch]
-  
   internal class EntryPoint : MelonMod
   {
-    [DllImport("User32.dll", CharSet = CharSet.Unicode)]
-    public static extern int MessageBox(IntPtr h, string m, string c, int type);
-    public static System.Collections.Generic.List<StringTable> copyTables = new System.Collections.Generic.List<StringTable>();
-    public static bool Activated = true;
+    public static List<StringTable> copyTables = new System.Collections.Generic.List<StringTable>();
 
     public static IEnumerator GetAllTables(Locale locale)
     {
@@ -42,9 +30,9 @@ namespace MoreLanguagesMod
       {
         if (RegenerateTranslationsUtils.ifRegenerate)
           RegenerateTranslationsUtils.AddItToList(stringTable1);
-        StringTable instantiate = UnityEngine.Object.Instantiate(stringTable1);
+        StringTable instantiate = Object.Instantiate(stringTable1);
         instantiate.hideFlags |= HideFlags.HideAndDontSave;
-        instantiate.SharedData = UnityEngine.Object.Instantiate(instantiate.SharedData);
+        instantiate.SharedData = Object.Instantiate(instantiate.SharedData);
         copyTables.Add(instantiate);
       }
       if (RegenerateTranslationsUtils.ifRegenerate)
@@ -53,12 +41,13 @@ namespace MoreLanguagesMod
       {
         foreach (var localeAdded in LanguageController.AddedLocales)
         {
-          foreach (var cloned in copyTables.Select(original => LanguageController.CreateClonedTable(original, localeAdded)))
+          foreach (var cloned in copyTables.Select(original => LanguageController.CreateClonedTable(original, localeAdded.Key, localeAdded.Value)))
           {
             LanguageController.CachedStringTables.Add(cloned.name, cloned);
           }
+          LanguageController.AddResourceLocationsForLocale(localeAdded.Key);
 
-          LanguageController.AddResourceLocationsForLocale(localeAdded);
+         
         }
       }
       catch (Exception e)
@@ -72,10 +61,8 @@ namespace MoreLanguagesMod
     [HarmonyPrefix]
     public static bool Patch_ProvideResource(ResourceManager __instance, IResourceLocation location, Type desiredType, ref AsyncOperationHandle __result)
     {
-      if (!EntryPoint.Activated)
-        return true;
       if (location == null || !location.PrimaryKey.Contains("MODDEDLanguage/")) return true;
-
+      
       if (LanguageController.CachedStringTables.TryGetValue(location.PrimaryKey.Replace("MODDEDLanguage/", string.Empty), out var value))
       {
         __result = __instance.CreateCompletedOperation(value, string.Empty);
@@ -86,47 +73,30 @@ namespace MoreLanguagesMod
     }
     [HarmonyPatch(typeof(Addressables), nameof(Addressables.LoadResourceLocationsAsync), typeof(Il2CppSystem.Object), typeof(Il2CppSystem.Type))]
     [HarmonyPrefix]
-    public static bool LoadResourceLocationsAsync(Il2CppSystem.Object key, ref AsyncOperationHandle<Il2CppSystem.Collections.Generic.IList<IResourceLocation>> __result)
+    public static bool LoadResourceLocationsAsync(Il2CppSystem.Object key, Il2CppSystem.Type type, ref AsyncOperationHandle<Il2CppSystem.Collections.Generic.IList<IResourceLocation>> __result)
     {
-      if (!EntryPoint.Activated)
-        return true;
-      
       if (key == null)
         return true;
-      foreach (var locale in LanguageController.AddedLocales)
+      foreach (var locale in LanguageController.AddedLocales.Keys)
       {
-        // MelonLogger.Msg(key.ToString());
-        if (key.ToString()!.Contains($"_{locale.Identifier.Code}") && LanguageController.ResourceLocationBases.TryGetValue("MODDEDLanguage/" + key.ToString(), out var value))
+        if (key.ToString().Contains($"_{locale.Identifier.Code}") && LanguageController.ResourceLocationBases.TryGetValue("MODDEDLanguage/" + key.ToString(), out var value))
         {
           __result = Addressables.ResourceManager.CreateCompletedOperation(value, string.Empty);
-          MelonLogger.Msg($"Setting custom ResourceLocation: {value}");
           return false;
         }      
       }
       return true;
-            
+
     }
     
-    
-
     public override void OnInitializeMelon()
     {
-
-      if (!Directory.Exists(Path.Combine(MelonEnvironment.MelonBaseDirectory, "MoreLanguages")))
-      {
-        Activated = false;
-        MessageBox(IntPtr.Zero, "The MoreLanguagesMod is not installed properly. Please read the mod description again", "Information", 0);
-        return;
-      }
-
       LanguageController.Setup();
-      LanguageController.InstallLocale(Locale.CreateLocale(SystemLanguage.Polish));
+      LanguageController.InstallLocale(Locale.CreateLocale(SystemLanguage.Polish), typeof(EntryPoint).Assembly);
+      LanguageController.InstallLocale(Locale.CreateLocale(SystemLanguage.Czech), typeof(EntryPoint).Assembly);
+      LanguageController.InstallLocale(Locale.CreateLocale(SystemLanguage.Turkish), typeof(EntryPoint).Assembly);
 
-
-
-      // ShopItemAssetReference
-      // LanguageController.InstallLocale(Locale.CreateLocale(SystemLanguage.Turkish));
     }
-    
   }
+
 }

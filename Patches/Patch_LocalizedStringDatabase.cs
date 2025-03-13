@@ -1,8 +1,5 @@
 ﻿using HarmonyLib;
-using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
-using UnityEngine.Localization.SmartFormat.Core.Formatting;
-using UnityEngine.Localization.SmartFormat.PersistentVariables;
 using UnityEngine.Localization.Tables;
 
 namespace MoreLanguagesMod.Patches;
@@ -11,7 +8,7 @@ namespace MoreLanguagesMod.Patches;
 public static class Patch_LocalizedStringDatabase
 {
     [HarmonyPatch(nameof(GenerateLocalizedString)), HarmonyPrefix]
-    public static void GenerateLocalizedString(ref StringTable table, ref StringTableEntry entry, TableReference tableReference, TableEntryReference tableEntryReference, Locale locale)
+    public static void GenerateLocalizedString(ref StringTable table, ref StringTableEntry entry, TableEntryReference tableEntryReference)
     {
         if (entry == null && table)
         {
