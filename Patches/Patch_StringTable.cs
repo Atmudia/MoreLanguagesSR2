@@ -22,10 +22,7 @@ namespace MoreLanguagesMod.Patches
             if (keyId == 0L)
                 return;
             if (!LanguageController.ModdedTranslations.TryGetValue(instance.TableCollectionName, out var dictionary))
-            {
-               
                 LanguageController.ModdedTranslations.TryAdd(instance.TableCollectionName, dictionary = new Dictionary<long, string>());
-            }
             dictionary.TryAdd(keyId, localized);
         }
     }

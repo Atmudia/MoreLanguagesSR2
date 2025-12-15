@@ -1,15 +1,13 @@
 ﻿using Il2CppTMPro;
 using MelonLoader;
 using System.Reflection;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using Il2CppInterop.Runtime;
-// using MelonLoader.TinyJSON;
 using UnityEngine;
-using UnityEngine.Localization;
 using UnityEngine.Localization.Tables;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.ResourceManagement.ResourceProviders;
+using Locale = UnityEngine.Localization.Locale;
 using Object = UnityEngine.Object;
 
 namespace MoreLanguagesMod
@@ -19,6 +17,7 @@ namespace MoreLanguagesMod
     internal static Dictionary<Locale, Assembly> AddedLocales = new Dictionary<Locale, Assembly>();
     internal static Dictionary<string, Dictionary<long, string>> ModdedTranslations = new Dictionary<string, Dictionary<long, string>>();
     internal static readonly Dictionary<string, StringTable> CachedStringTables = new Dictionary<string, StringTable>();
+    internal static readonly Dictionary<string, AssetTable> CachedAssetTables = new Dictionary<string, AssetTable>();
     
     private static readonly Dictionary<string, TMP_FontAsset> FontAssets = new Dictionary<string, TMP_FontAsset>();
     internal static Dictionary<string, Il2CppSystem.Collections.Generic.IList<IResourceLocation>> ResourceLocationBases { get; } = new Dictionary<string, Il2CppSystem.Collections.Generic.IList<IResourceLocation>>();
@@ -99,7 +98,17 @@ namespace MoreLanguagesMod
     {
       foreach (var tableCollectionName in EntryPoint.copyTables.Select(x => x.TableCollectionName))
       {
-        var key = $"MODDEDLanguage/{tableCollectionName}_{locale.Identifier.Code}";
+        var key = $"MoreLanguagesMod/{tableCollectionName}_{locale.Identifier.Code}";
+        var resourceLocation =
+          new ResourceLocationBase(key, key, typeof(BundledAssetProvider).FullName, Il2CppType.Of<Object>());
+        var list = new Il2CppSystem.Collections.Generic.List<IResourceLocation>();
+        list.Add(resourceLocation.Cast<IResourceLocation>());
+        ResourceLocationBases.Add(key, list.Cast<Il2CppSystem.Collections.Generic.IList<IResourceLocation>>());
+      }
+
+      foreach (var tableCollectionName in EntryPoint.copyAssetTables.Select(x => x.TableCollectionName))
+      {
+        var key = $"MoreLanguagesMod/{tableCollectionName}_{locale.Identifier.Code}";
         var resourceLocation =
           new ResourceLocationBase(key, key, typeof(BundledAssetProvider).FullName, Il2CppType.Of<Object>());
         var list = new Il2CppSystem.Collections.Generic.List<IResourceLocation>();
@@ -107,7 +116,7 @@ namespace MoreLanguagesMod
         ResourceLocationBases.Add(key, list.Cast<Il2CppSystem.Collections.Generic.IList<IResourceLocation>>());
       }
     }
-    public static StringTable CreateClonedTable(StringTable original, Locale localeAdded, Assembly assembly)
+    public static StringTable CreateClonedStringTable(StringTable original, Locale localeAdded, Assembly assembly)
     {
       var cloned = Object.Instantiate(original);
       cloned.name = original.name.Replace("_en(Clone)", $"_{localeAdded.Identifier.Code}", StringComparison.InvariantCultureIgnoreCase);
@@ -121,8 +130,6 @@ namespace MoreLanguagesMod
       if (resourceStream == null) return cloned;
       using StreamReader reader = new StreamReader(resourceStream);
       string jsonContent = reader.ReadToEnd();
-      // var translations = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonContent);
-      // var translations = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonContent);
       JsonObject translations = (JsonObject)JsonNode.Parse(jsonContent);
 
       foreach (var entry in cloned.m_TableEntries)
@@ -133,6 +140,15 @@ namespace MoreLanguagesMod
         }
       }
 
+      return cloned;
+    }
+
+    public static AssetTable CreateClonedAssetTable(AssetTable original, Locale localeAdded)
+    {
+      var cloned = Object.Instantiate(original);
+      cloned.name = original.name.Replace("_en(Clone)", $"_{localeAdded.Identifier.Code}", StringComparison.InvariantCultureIgnoreCase);
+      cloned.LocaleIdentifier = localeAdded.Identifier;
+      cloned.hideFlags |= HideFlags.HideAndDontSave;
       return cloned;
     }
   }

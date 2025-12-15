@@ -55,45 +55,7 @@
     <EmbeddedResource Include="..\MoreLanguagesUnity\MoreLanguages\Assets\AssetBundles\morelanguages">
       <Link>morelanguages</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="LangFiles\pl\Actor.json" />
-    <EmbeddedResource Include="LangFiles\pl\BootUp.json" />
-    <EmbeddedResource Include="LangFiles\pl\Build.json" />
-    <EmbeddedResource Include="LangFiles\pl\CommStation.json" />
-    <EmbeddedResource Include="LangFiles\pl\Global.json" />
-    <EmbeddedResource Include="LangFiles\pl\Keys.json" />
-    <EmbeddedResource Include="LangFiles\pl\Options.json" />
-    <EmbeddedResource Include="LangFiles\pl\Pedia.json" />
-    <EmbeddedResource Include="LangFiles\pl\PediaPage.json" />
-    <EmbeddedResource Include="LangFiles\pl\Rancher.json" />
-    <EmbeddedResource Include="LangFiles\pl\ResearchDrone.json" />
-    <EmbeddedResource Include="LangFiles\pl\Tutorial.json" />
-    <EmbeddedResource Include="LangFiles\pl\UI.json" />
-    <EmbeddedResource Include="LangFiles\cs\Actor.json" />
-    <EmbeddedResource Include="LangFiles\cs\BootUp.json" />
-    <EmbeddedResource Include="LangFiles\cs\Build.json" />
-    <EmbeddedResource Include="LangFiles\cs\CommStation.json" />
-    <EmbeddedResource Include="LangFiles\cs\Global.json" />
-    <EmbeddedResource Include="LangFiles\cs\Keys.json" />
-    <EmbeddedResource Include="LangFiles\cs\Options.json" />
-    <EmbeddedResource Include="LangFiles\cs\Pedia.json" />
-    <EmbeddedResource Include="LangFiles\cs\PediaPage.json" />
-    <EmbeddedResource Include="LangFiles\cs\Rancher.json" />
-    <EmbeddedResource Include="LangFiles\cs\ResearchDrone.json" />
-    <EmbeddedResource Include="LangFiles\cs\Tutorial.json" />
-    <EmbeddedResource Include="LangFiles\cs\UI.json" />
-    <EmbeddedResource Include="LangFiles\tr\Actor.json" />
-    <EmbeddedResource Include="LangFiles\tr\BootUp.json" />
-    <EmbeddedResource Include="LangFiles\tr\Build.json" />
-    <EmbeddedResource Include="LangFiles\tr\CommStation.json" />
-    <EmbeddedResource Include="LangFiles\tr\Global.json" />
-    <EmbeddedResource Include="LangFiles\tr\Keys.json" />
-    <EmbeddedResource Include="LangFiles\tr\Options.json" />
-    <EmbeddedResource Include="LangFiles\tr\Pedia.json" />
-    <EmbeddedResource Include="LangFiles\tr\PediaPage.json" />
-    <EmbeddedResource Include="LangFiles\tr\Rancher.json" />
-    <EmbeddedResource Include="LangFiles\tr\ResearchDrone.json" />
-    <EmbeddedResource Include="LangFiles\tr\Tutorial.json" />
-    <EmbeddedResource Include="LangFiles\tr\UI.json" />
+      <EmbeddedResource Include="LangFiles\**\*.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="LangFiles\tr\" />
