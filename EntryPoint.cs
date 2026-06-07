@@ -12,7 +12,8 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 using Locale = UnityEngine.Localization.Locale;
 using Object = UnityEngine.Object;
 
-[assembly: MelonInfo(typeof(EntryPoint), "MoreLanguagesMod", "1.3", "Atmudia", "https://www.nexusmods.com/slimerancher2/mods/31")]
+[assembly: MelonInfo(typeof(EntryPoint), "MoreLanguagesMod", "1.4", "Atmudia", "https://www.nexusmods.com/slimerancher2/mods/31")]
+[assembly: MelonGame("MonomiPark", "SlimeRancher2")]
 namespace MoreLanguagesMod
 {
   [HarmonyPatch]
