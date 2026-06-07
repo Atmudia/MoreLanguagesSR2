@@ -29,7 +29,8 @@ namespace MoreLanguagesMod
       {
         byte[] buffer = new byte[manifestResourceStream.Length];
         _ = manifestResourceStream.Read((System.Span<byte>) buffer);
-        AssetBundle assetBundle = AssetBundle.LoadFromMemory(buffer);
+        var memoryStream = new Il2CppSystem.IO.MemoryStream(buffer);
+        Il2CppAssetBundle assetBundle = Il2CppAssetBundleManager.LoadFromStream(memoryStream);
         var enumerable = assetBundle.LoadAllAssets(Il2CppType.Of<Font>()).Select(x => x.Cast<Font>());
         foreach (var font in enumerable)
         {
